@@ -24,6 +24,7 @@ use std::cell::{RefCell, RefMut};
 use std::rc::{Rc, Weak};
 use winit::event::{Event, WindowEvent};
 use winit::event_loop::EventLoopWindowTarget;
+use winit::platform::macos::EventLoopBuilderExtMacOS;
 
 #[cfg(not(target_arch = "wasm32"))]
 /// The Default, and the selection clippoard
@@ -38,7 +39,9 @@ struct NotRunningEventLoop {
 
 impl NotRunningEventLoop {
     fn new() -> Result<Self, PlatformError> {
-        let mut builder = winit::event_loop::EventLoopBuilder::with_user_event();
+        let mut builderr = winit::event_loop::EventLoopBuilder::with_user_event();
+        let mut builder =
+            builderr.with_activation_policy(winit::platform::macos::ActivationPolicy::Prohibited);
 
         #[cfg(all(unix, not(target_os = "macos")))]
         {
